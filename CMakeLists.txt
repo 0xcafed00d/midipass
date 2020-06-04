@@ -1,8 +1,9 @@
-cmake_minimum_required(VERSION 3.13.0)
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+cmake_minimum_required(VERSION 3.17.0)
 
 project (midipass)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(CMAKE_THREAD_PREFER_PTHREAD On)
 find_package(Threads REQUIRED)
@@ -13,13 +14,13 @@ add_compile_definitions(
 )
 
 add_executable(
-	midipass
+	${CMAKE_PROJECT_NAME}
 	src/midipass.cpp
 	src/RtMidi.cpp
 )
 
 target_link_libraries (
-	midipass 
+	${CMAKE_PROJECT_NAME}
 	${ALSA_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT}
 )  
