@@ -42,7 +42,8 @@ unsigned int parseInt(const char* s) {
 	}
 }
 
-void dumpMessage(midi_message_t& msg) {
+void dumpMessage(double timestamp, midi_message_t& msg) {
+	printf("%f ", timestamp);
 	for (auto v : msg) {
 		printf("%02x ", (int)v);
 	}
@@ -54,7 +55,13 @@ std::shared_ptr<RtMidiOut> midi_out;
 
 void midiCallback(double timeStamp, std::vector<unsigned char>* message, void* userData) {
 	if (message->size()) {
-		dumpMessage(*message);
+		if ((*message)[0] == 0xb0 && (*message)[1] == 0) {
+			auto val = (*message)[2];
+			message->clear();
+			message->push_back(0xc0);
+			message->push_back(val);
+		}
+		dumpMessage(timeStamp, *message);
 		midi_out->sendMessage(message);
 	}
 }
@@ -71,6 +78,7 @@ int main(int argc, char** argv) {
 			displayUsage();
 			displayPortNames("Input ports:", in_names);
 			displayPortNames("Output ports:", out_names);
+			return 0;
 		}
 
 		if (argc == 3) {
